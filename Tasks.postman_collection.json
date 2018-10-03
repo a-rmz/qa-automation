@@ -1,0 +1,493 @@
+{
+	"info": {
+		"_postman_id": "857f2bea-6640-47a4-9156-1722fe6a1102",
+		"name": "Tasks",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get active tasks",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "912a0c8d-c69d-4ceb-a74e-aa0d0df40889",
+						"type": "text/javascript",
+						"exec": [
+							"eval(globals.postmanBDD);",
+							"",
+							"",
+							"describe('Validate the response', () => {",
+							"   it('should respond with a 200', () => {",
+							"        response.status.should.equal(200); ",
+							"   });",
+							"   it(`should respond in less than ${pm.variables.get('timeout')}ms`, () => {",
+							"       const timeout = parseInt(pm.variables.get('timeout'), 10);",
+							"       expect(pm.response.responseTime).to.be.below(timeout);",
+							"   });",
+							"});",
+							"",
+							"describe('Validate response data', () => {",
+							"    it('should have a valid schema', () => {",
+							"        const schema = pm.variables.get('activeTasksSchema');",
+							"        tv4.validate(response.body, schema).should.be.true;",
+							"    });",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{baseURL}}/tasks",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"tasks"
+					]
+				},
+				"description": "Returns a JSON-encoded array containing all user active tasks."
+			},
+			"response": []
+		},
+		{
+			"name": "Create a task",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "cfb2b607-458b-404d-ad28-049dabe5fe3b",
+						"type": "text/javascript",
+						"exec": [
+							"eval(globals.postmanBDD);",
+							"",
+							"pm.environment.set('taskId', response.body.id);",
+							"pm.environment.set('taskContent', response.body.content);",
+							"",
+							"",
+							"describe('Validate the response', () => {",
+							"   it('should respond with a 200', () => {",
+							"        response.status.should.equal(200); ",
+							"   });",
+							"   it(`should respond in less than ${pm.variables.get('timeout')}ms`, () => {",
+							"       const timeout = parseInt(pm.variables.get('timeout'), 10);",
+							"       expect(pm.response.responseTime).to.be.below(timeout);",
+							"   });",
+							"   it('should respond with a json', () => {",
+							"        response.should.have.header('content-type', 'application/json');",
+							"   });",
+							"});",
+							"",
+							"describe('Validate response data', () => {",
+							"    it('should have a valid schema', () => {",
+							"        const schema = pm.variables.get('taskSchema');",
+							"        tv4.validate(response.body, schema).should.be.true;",
+							"    });",
+							"    it('should have the correct content', () => {",
+							"        response.body.content.should.equal('Appointment with Maria');",
+							"    });",
+							"    it('should have zero comments', () => {",
+							"        response.body.comment_count.should.equal(0);",
+							"    });",
+							"    it('should not be completed', () => {",
+							"        response.body.completed.should.equal(false);",
+							"    });",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"content\": \"Appointment with Maria\",\n\t\"due_string\": \"tomorrow at 12:00\",\n\t\"due_lang\": \"en\",\n\t\"priority\": 4\n}"
+				},
+				"url": {
+					"raw": "{{baseURL}}/tasks",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"tasks"
+					]
+				},
+				"description": "Creates a new project and return its value in a JSON format."
+			},
+			"response": []
+		},
+		{
+			"name": "Get a task",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4fe53b8a-83db-4fda-8131-7255c9fc1ecd",
+						"type": "text/javascript",
+						"exec": [
+							"eval(globals.postmanBDD);",
+							"",
+							"describe('Validate the response', () => {",
+							"   it('should respond with a 200', () => {",
+							"        response.status.should.equal(200); ",
+							"   });",
+							"   it(`should respond in less than ${pm.variables.get('timeout')}ms`, () => {",
+							"       const timeout = parseInt(pm.variables.get('timeout'), 10);",
+							"       expect(pm.response.responseTime).to.be.below(timeout);",
+							"   });",
+							"   it('should respond with a json', () => {",
+							"        response.should.have.header('content-type', 'application/json');",
+							"   });",
+							"});",
+							"",
+							"describe('Validate project data', () => {",
+							"    it('should have a valid schema', () => {",
+							"        const schema = pm.variables.get('taskSchema');",
+							"        tv4.validate(response.body, schema).should.be.true;",
+							"    });",
+							"    it('should have the correct id', () => {",
+							"        const projectId = pm.variables.get('taskId');",
+							"        response.body.id.should.equal(projectId);",
+							"    });",
+							"    it('should have the correct content', () => {",
+							"        const projectName = pm.variables.get('taskContent');",
+							"        response.body.content.should.equal(projectName);",
+							"    });",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{baseURL}}/tasks/{{taskId}}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"tasks",
+						"{{taskId}}"
+					]
+				},
+				"description": "Returns a task by id."
+			},
+			"response": []
+		},
+		{
+			"name": "Update a task",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "bd3a2ec7-39e4-43ef-8365-e088ba29429e",
+						"type": "text/javascript",
+						"exec": [
+							"eval(globals.postmanBDD);",
+							"",
+							"describe('Validate the response', () => {",
+							"   it('should respond with a 204', () => {",
+							"        response.status.should.equal(204); ",
+							"   });",
+							"   it(`should respond in less than ${pm.variables.get('timeout')}ms`, () => {",
+							"       const timeout = parseInt(pm.variables.get('timeout'), 10);",
+							"       expect(pm.response.responseTime).to.be.below(timeout);",
+							"   });",
+							"});",
+							"",
+							"describe('Validate project data', () => {",
+							"    it('should have an empty body', () => {",
+							"        response.body.should.be.a('string').that.is.empty;",
+							"    });",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"content\": \"Movies with Maria\"\n}"
+				},
+				"url": {
+					"raw": "{{baseURL}}/tasks/{{taskId}}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"tasks",
+						"{{taskId}}"
+					]
+				},
+				"description": "Updates a task and returns an empty body with the HTTP status code 204."
+			},
+			"response": []
+		},
+		{
+			"name": "Close a task",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "bd3a2ec7-39e4-43ef-8365-e088ba29429e",
+						"type": "text/javascript",
+						"exec": [
+							"eval(globals.postmanBDD);",
+							"",
+							"describe('Validate the response', () => {",
+							"   it('should respond with a 204', () => {",
+							"        response.status.should.equal(204); ",
+							"   });",
+							"   it(`should respond in less than ${pm.variables.get('timeout')}ms`, () => {",
+							"       const timeout = parseInt(pm.variables.get('timeout'), 10);",
+							"       expect(pm.response.responseTime).to.be.below(timeout);",
+							"   });",
+							"});",
+							"",
+							"describe('Validate project data', () => {",
+							"    it('should have an empty body', () => {",
+							"        response.body.should.be.a('string').that.is.empty;",
+							"    });",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{baseURL}}/tasks/{{taskId}}/close",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"tasks",
+						"{{taskId}}",
+						"close"
+					]
+				},
+				"description": "Closes a task and returns an empty body with a HTTP status code 204.\n\nThe command does exactly what official clients do when you close a task. Regular tasks are completed and moved to history, subtasks are checked (marked as done, but not moved to history), recurring tasks are moved forward (due date is updated)."
+			},
+			"response": []
+		},
+		{
+			"name": "Reopen a task",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "bd3a2ec7-39e4-43ef-8365-e088ba29429e",
+						"type": "text/javascript",
+						"exec": [
+							"eval(globals.postmanBDD);",
+							"",
+							"describe('Validate the response', () => {",
+							"   it('should respond with a 204', () => {",
+							"        response.status.should.equal(204); ",
+							"   });",
+							"   it(`should respond in less than ${pm.variables.get('timeout')}ms`, () => {",
+							"       const timeout = parseInt(pm.variables.get('timeout'), 10);",
+							"       expect(pm.response.responseTime).to.be.below(timeout);",
+							"   });",
+							"});",
+							"",
+							"describe('Validate project data', () => {",
+							"    it('should have an empty body', () => {",
+							"        response.body.should.be.a('string').that.is.empty;",
+							"    });",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{baseURL}}/tasks/{{taskId}}/reopen",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"tasks",
+						"{{taskId}}",
+						"reopen"
+					]
+				},
+				"description": "Reopens a task and returns an empty body with a HTTP status code 204.\n\nThis command reopens a previously closed task. Works both with checked tasks in the user’s workspace and tasks moved to history. The behaviour varies for different types of tasks (the command follows the behaviour of official clients when tasks are uncompleted or extracted from the history).\n\n* Regular tasks are extracted from the history and added back to the user workspace as normal unchecked tasks (without their subtasks though).\n* Completed subtasks of a non-completed task are simply marked as uncompleted.\n* Subtasks that were moved to history are added back to the workspace as first-level tasks.\n* Non-completed recurring tasks are ignored."
+			},
+			"response": []
+		},
+		{
+			"name": "Delete a task",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e6ab60f7-c8d5-438b-94e3-f7af5473b5a5",
+						"type": "text/javascript",
+						"exec": [
+							"eval(globals.postmanBDD);",
+							"",
+							"describe('Validate the response', () => {",
+							"   it('should respond with a 204', () => {",
+							"        response.status.should.equal(204); ",
+							"   });",
+							"   it(`should respond in less than ${pm.variables.get('timeout')}ms`, () => {",
+							"       const timeout = parseInt(pm.variables.get('timeout'), 10);",
+							"       expect(pm.response.responseTime).to.be.below(timeout);",
+							"   });",
+							"});",
+							"",
+							"describe('Validate project data', () => {",
+							"    it('should have an empty body', () => {",
+							"        response.body.should.be.a('string').that.is.empty;",
+							"    });",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{baseURL}}/tasks/{{taskId}}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"tasks",
+						"{{taskId}}"
+					]
+				},
+				"description": "Deletes a task and returns an empty body with a HTTP status 204."
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "1c16a1e6-dba6-4c74-a7c4-2b9936e73ba0",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "79025f6d-82f7-4c95-8799-5affc93cbf39",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

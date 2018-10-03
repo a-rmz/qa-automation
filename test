@@ -1,0 +1,13 @@
+#!/bin/bash
+
+newman run \
+  --bail \
+  --environment Todoist.postman_environment.json \
+  --globals QA-certification-todoist.postman_globals.json \
+  Projects.postman_collection.json
+
+newman run \
+  --bail \
+  --environment Todoist.postman_environment.json \
+  --globals QA-certification-todoist.postman_globals.json \
+  Tasks.postman_collection.json

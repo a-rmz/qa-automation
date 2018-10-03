@@ -1,0 +1,344 @@
+{
+	"info": {
+		"_postman_id": "062b41be-cc5d-4c31-87ce-b9f6a76757dd",
+		"name": "Projects",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get all projects",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "efac35b8-bc4e-470d-9b58-4fcbb20f7b77",
+						"type": "text/javascript",
+						"exec": [
+							"eval(globals.postmanBDD);",
+							"",
+							"",
+							"describe('Validate the response', () => {",
+							"   it('should respond with a 200', () => {",
+							"        response.status.should.equal(200); ",
+							"   });",
+							"   it(`should respond in less than ${pm.variables.get('timeout')}ms`, () => {",
+							"       const timeout = parseInt(pm.variables.get('timeout'), 10);",
+							"       expect(pm.response.responseTime).to.be.below(timeout);",
+							"   });",
+							"});",
+							"",
+							"describe('Validate response data', () => {",
+							"    it('should have a valid schema', () => {",
+							"        const schema = pm.variables.get('allProjectsSchema');",
+							"        tv4.validate(response.body, schema).should.be.true;",
+							"    });",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{baseURL}}/projects",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"projects"
+					]
+				},
+				"description": "Returns JSON-encoded array containing all user projects."
+			},
+			"response": []
+		},
+		{
+			"name": "Create a project",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "a8930dc5-31d2-4202-82b4-57c490d8f8aa",
+						"type": "text/javascript",
+						"exec": [
+							"eval(globals.postmanBDD);",
+							"",
+							"pm.environment.set('projectId', response.body.id);",
+							"pm.environment.set('projectName', response.body.name);",
+							"",
+							"describe('Validate the response', () => {",
+							"   it('should respond with a 200', () => {",
+							"        response.status.should.equal(200); ",
+							"   });",
+							"   it(`should respond in less than ${pm.variables.get('timeout')}ms`, () => {",
+							"       const timeout = parseInt(pm.variables.get('timeout'), 10);",
+							"       expect(pm.response.responseTime).to.be.below(timeout);",
+							"   });",
+							"   it('should respond with a json', () => {",
+							"        response.should.have.header('content-type', 'application/json');",
+							"   });",
+							"});",
+							"",
+							"describe('Validate response data', () => {",
+							"    it('should have a valid schema', () => {",
+							"        const schema = pm.variables.get('projectSchema');",
+							"        tv4.validate(response.body, schema).should.be.true;",
+							"    });",
+							"    it('should have the correct name', () => {",
+							"        response.body.name.should.equal('Movies to watch');",
+							"    });",
+							"    it('should have zero comments', () => {",
+							"        response.body.comment_count.should.equal(0);",
+							"    });",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Movies to watch\"\n}"
+				},
+				"url": {
+					"raw": "{{baseURL}}/projects",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"projects"
+					]
+				},
+				"description": "Creates a new project and return its value in a JSON format."
+			},
+			"response": []
+		},
+		{
+			"name": "Get a project",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "39a7aeb1-8676-462b-840a-8f5b6e9befc3",
+						"type": "text/javascript",
+						"exec": [
+							"eval(globals.postmanBDD);",
+							"",
+							"",
+							"describe('Validate the response', () => {",
+							"   it('should respond with a 200', () => {",
+							"        response.status.should.equal(200); ",
+							"   });",
+							"   it(`should respond in less than ${pm.variables.get('timeout')}ms`, () => {",
+							"       const timeout = parseInt(pm.variables.get('timeout'), 10);",
+							"       expect(pm.response.responseTime).to.be.below(timeout);",
+							"   });",
+							"   it('should respond with a json', () => {",
+							"        response.should.have.header('content-type', 'application/json');",
+							"   });",
+							"});",
+							"",
+							"describe('Validate project data', () => {",
+							"    it('should have a valid schema', () => {",
+							"        const schema = pm.variables.get('projectSchema');",
+							"        tv4.validate(response.body, schema).should.be.true;",
+							"    });",
+							"    it('should have the correct id', () => {",
+							"        const projectId = pm.variables.get('projectId');",
+							"        response.body.id.should.equal(projectId);",
+							"    });",
+							"    it('should have the correct name', () => {",
+							"        const projectName = pm.variables.get('projectName');",
+							"        response.body.name.should.equal(projectName);",
+							"    });",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{baseURL}}/projects/{{projectId}}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"projects",
+						"{{projectId}}"
+					]
+				},
+				"description": "Returns a JSON object containing a project object related to the given id."
+			},
+			"response": []
+		},
+		{
+			"name": "Update a project",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "08555072-d284-42e6-9c69-b6e99f80cbb3",
+						"type": "text/javascript",
+						"exec": [
+							"eval(globals.postmanBDD);",
+							"",
+							"describe('Validate the response', () => {",
+							"   it('should respond with a 204', () => {",
+							"        response.status.should.equal(204); ",
+							"   });",
+							"   it(`should respond in less than ${pm.variables.get('timeout')}ms`, () => {",
+							"       const timeout = parseInt(pm.variables.get('timeout'), 10);",
+							"       expect(pm.response.responseTime).to.be.below(timeout);",
+							"   });",
+							"});",
+							"",
+							"describe('Validate project data', () => {",
+							"    it('should have an empty body', () => {",
+							"        response.body.should.be.a('string').that.is.empty;",
+							"    });",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Movies to review\"\n}"
+				},
+				"url": {
+					"raw": "{{baseURL}}/projects/{{projectId}}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"projects",
+						"{{projectId}}"
+					]
+				},
+				"description": "Updates the project for the given id and returns HTTP status code 204 with an empty body."
+			},
+			"response": []
+		},
+		{
+			"name": "Delete a project",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "1e9901a6-1de9-441a-8fd0-13c335f6e71a",
+						"type": "text/javascript",
+						"exec": [
+							"eval(globals.postmanBDD);",
+							"",
+							"describe('Validate the response', () => {",
+							"   it('should respond with a 204', () => {",
+							"        response.status.should.equal(204); ",
+							"   });",
+							"   it(`should respond in less than ${pm.variables.get('timeout')}ms`, () => {",
+							"       const timeout = parseInt(pm.variables.get('timeout'), 10);",
+							"       expect(pm.response.responseTime).to.be.below(timeout);",
+							"   });",
+							"});",
+							"",
+							"describe('Validate project data', () => {",
+							"    it('should have an empty body', () => {",
+							"        response.body.should.be.a('string').that.is.empty;",
+							"    });",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{baseURL}}/projects/{{projectId}}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"projects",
+						"{{projectId}}"
+					]
+				},
+				"description": "Deletes a project and returns an empty response."
+			},
+			"response": []
+		}
+	]
+}
